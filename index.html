@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Project O</title>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    
+  </head>
+
+
+  <body>
+
+    <div class="container">
+
+      <h1>Project Otro</h1>
+
+
+      <div id="bar" class="col-md-12"><div class="bar-inn"></div></div>
+     
+      <div class="col-md-12 buttons-container">
+        <div class="col-md-6 nopadding button_inn"><button id="buttonUp">Subir</button></div>
+        <div class="col-md-6 nopadding button_inn"><button id="buttonDown">Bajar</button></div>
+      </div>
+
+
+        <div class="col-md-12">El nivel de intensidad baja automaticamente cada 25 minutos si nadie la sube o la baja</div>
+
+    </div>
+
+  </body>
+
+
+  <script>
+
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').trigger('focus')
+    })
+
+    $(function () {  
+      var socket = io();
+      var num = 5;
+
+      $('#buttonUp').click(function(){
+        socket.emit('bar up', num);
+      });  
+      $('#buttonDown').click(function(){
+        socket.emit('bar down', num);
+      });      
+
+      socket.on('bar up', function(msg){
+        $('.bar-inn').css('width', msg + '%');
+        colorBar(msg);
+      });
+
+      socket.on('bar down', function(msg){
+        $('.bar-inn').css('width', msg + '%');
+        colorBar(msg);
+      });
+
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+
+      socket.on('user connect', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+
+      socket.on('user disconnect', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+
+      function colorBar(msg){
+        if(msg <= 30){
+          $('.bar-inn').css('background-color','green');  
+        }else if(msg > 30 && msg <= 70){
+          $('.bar-inn').css('background-color','yellow');
+        }else{
+          $('.bar-inn').css('background-color','red');
+        }
+      }
+    });
+  </script>
+    
+
+</html>
